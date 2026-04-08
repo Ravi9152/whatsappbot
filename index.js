@@ -8,6 +8,7 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Bot is running 🚀");
 });
+const VERIFY_TOKEN = "mytoken123";
 
 // webhook endpoint
 app.post("/webhook", async (req, res) => {
