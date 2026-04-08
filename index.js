@@ -19,21 +19,23 @@ app.post("/webhook", async (req, res) => {
       const from = message.from;
 
       // auto reply message
-      await axios.post(
-        https://graph.facebook.com/v19.0/${process.env.PHONE_ID}/messages,
-        {
-          messaging_product: "whatsapp",
-          to: from,
-          text: { body: "Auto reply: Hello 👋" }
-        },
-        {
-          headers: {
-            Authorization: Bearer ${process.env.TOKEN},
-            "Content-Type": "application/json"
-          }
-        }
-      );
+     
+
+await axios.post(
+  (https://graph.facebook.com/v19.0/${process.env.PHONE_ID}/messages),
+  {
+    messaging_product: "whatsapp",
+    to: from,
+    text: { body: "Auto reply: Hello 👋" }
+  },
+  {
+    headers: {
+      Authorization: `Bearer ${process.env.TOKEN}`,
+      "Content-Type": "application/json"
     }
+  }
+);
+
 
     res.sendStatus(200);
   } catch (err) {
