@@ -4,44 +4,45 @@ import axios from "axios";
 const app = express();
 app.use(express.json());
 
-const TOKEN = "YOUR_ACCESS_TOKEN";
-const PHONE_ID = "YOUR_PHONE_NUMBER_ID";
-
-// Verify webhook
-app.get("/webhook", (req, res) => {
-  const verify_token = "12345";
-
-  if (req.query["hub.verify_token"] === verify_token) {
-    res.send(req.query["hub.challenge"]);
-  } else {
-    res.send("Error");
-  }
+// webhook verify
+app.get("/", (req, res) => {
+  res.send("Bot is running 🚀");
 });
 
-// Auto reply
+// webhook endpoint
 app.post("/webhook", async (req, res) => {
-  const msg = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.text?.body;
-  const from = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0]?.from;
+  try {
+    const body = req.body;
 
-  if (msg) {
-    const reply = "Hello 👋 Auto reply working!";
+    if (body.entry) {
+      const message = body.entry[0].changes[0].value.messages[0];
+      const from = message.from;
 
-    await axios.post(
-      https://graph.facebook.com/v19.0/${PHONE_ID}/messages,
-      {
-        messaging_product: "whatsapp",
-        to: from,
-        text: { body: reply },
-      },
-      {
-        headers: {
-          Authorization: Bearer ${TOKEN},
+      // auto reply message
+      await axios.post(
+        https://graph.facebook.com/v19.0/${process.env.PHONE_ID}/messages,
+        {
+          messaging_product: "whatsapp",
+          to: from,
+          text: { body: "Auto reply: Hello 👋" }
         },
-      }
-    );
-  }
+        {
+          headers: {
+            Authorization: Bearer ${process.env.TOKEN},
+            "Content-Type": "application/json"
+          }
+        }
+      );
+    }
 
-  res.sendStatus(200);
+    res.sendStatus(200);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
 });
 
-app.listen(3000, () => console.log("Server running"));
+// server start
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Server running...");
+});
